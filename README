@@ -1,7 +1,18 @@
 BespinArea
 ==========
 
-Introduction goes here.
+<<BESPIN DESCRIPTION>>
+
+BespinArea is a Ruby on Rails plugin consisting of ActionView helpers and Javascript to bind a Bespin editor to a text area.
+It is the goal of this project to make the replacement as seamless as possible by not requiring any additional JavaScript 
+libraries and not impacting the functioning of any text areas if bespin is not supported in the client browser.
+
+There are two options that can be set globally:
+ActionView::bespin_areas = [true | false] 
+ActionView::bespin_default_options is a hash passed to the bespin editor.
+
+both text_area and text_area_tag both accept a :bespin option along with the html options.  Set it to true or false to control
+the default behavior, pass it a hash to enable the editor and include the options.
 
 
 Example

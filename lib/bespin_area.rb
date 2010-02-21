@@ -1,54 +1,42 @@
 module ActionView
   
   mattr_accessor :bespin_areas
-  ActionView::bespin_areas = false
+  ActionView::bespin_areas = true
   
   module Helpers
     module FormHelper
-      def text_area_with_bespin(object_name, method, options)
-        bespin = options.delete(:bespin)
-        bespin = ActionView::bespin_areas if bespin.nil?
-        ( bespin ? include_bespin_for(object_name, method) : '' ) +
-          text_area_without_bespin(object_name, method, options) 
+      def text_area_with_bespin(object_name, method, options = {})
+        bespin_options = options.delete(:bespin)
+        bespin_options = ActionView::bespin_areas if bespin_options.nil?
+        field_name = "#{object_name}_#{method}"
+        ( bespin_options ? include_bespin_for(field_name, bespin_options) : '' ) +
+          text_area_without_bespin(object_name, method, options)
       end
       alias_method_chain :text_area, :bespin
-
-      def include_bespin_for(object_name, method)
-        field_name = "#{object_name}_#{method}"
-        content = self.instance_variable_get("@#{object_name.to_s}").send(method)
-        script_tags(bespin_content(object_name, method)) + "<div id='#{field_name}_editor' style=' margin: 0; padding: 0; border: 0; height: 300px; ' class='bespin'>#{content}</div>"
+    end
+    
+    module FormTagHelper
+      def text_area_tag_with_bespin(name, content = nil, options = {})
+        bespin_options = options.delete(:bespin)
+        bespin_options = ActionView::bespin_areas if bespin_options.nil?
+        ( bespin_options ? include_bespin_for(name, bespin_options) : '' ) +
+          text_area_tag_without_bespin(name, content, options)
       end
-      
-      private
-      
-      def bespin_content(object_name, method)
-        field_name = "#{object_name}_#{method}"
+      alias_method_chain :text_area_tag, :bespin
+    end
+    
+    def include_bespin_for(field_name, bespin_options = {})
+      bespin_options ||= ActionView::bespin_default_options if bespin_options.empty?
+      bespin_options[:textAreaInputId] = field_name
+      content_tag(:div, nil, {:id => "#{field_name}_editor", :style => "visibility:hidden; margin: 0; padding: 0; border: 0; height: 0px; width:0px; "}) +
+      javascript_tag( 
         %{
-          window.onBespinLoad = function() {
-            var editingDiv = document.getElementById("#{field_name}_editor");
-
-            var bespin = editingDiv.bespin;
-
-          	var listener = SC.Object.create({
-          	  textAreaInput: document.getElementById('#{field_name}'),
-          	  textStorageEdited: function(sender, oldRange, newRange) {
-          	      this.textAreaInput.value = sender.value();
-          	  }
-          	});
-
-          	editingDiv.style.display="";
-          	listener.textAreaInput.style.display="none"
-
-          	listener.textAreaInput.value = bespin.getContent();
-
-          	bespin.getPath("editorPane.editorView.layoutManager.textStorage").addDelegate(listener);
-        	}
+          SC.ready(function() {            	
+            	#{RAILS_ENV == 'development' ? "window.bespin_area = " : ""}
+            	BespinArea.create(#{bespin_options.to_json});
+          });
         }
-      end
-            
-      def script_tags(js_code = '')
-         ( js_code.blank? ? '' : "<script>#{js_code}</script>" )
-      end
+      )
     end
   end
 end

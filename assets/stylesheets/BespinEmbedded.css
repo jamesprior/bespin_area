@@ -735,24 +735,6 @@ div#show-tests *{display:none;}/* ***** BEGIN LICENSE BLOCK *****
 * ***** END LICENSE BLOCK ***** */
 
 
-body {
-    padding: 0;
-    margin: 0;
-    background-color: #4f4e45;
-    font-family: Calibri, Arial, sans-serif;
-
-    overflow: hidden;
-	background-color: #2A211C;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-}
-
-img {
-    border: none;
-}
-
-*:focus { outline: 0; }
-
 /*
  * Contains the Styles Scrollbars
  */
