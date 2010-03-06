@@ -27,13 +27,12 @@ module ActionView
     
     def include_bespin_for(field_name, bespin_options = {})
       bespin_options ||= ActionView::bespin_default_options if bespin_options.empty?
-      bespin_options[:textAreaInputId] = field_name
       content_tag(:div, nil, {:id => "#{field_name}_editor", :style => "visibility:hidden; margin: 0; padding: 0; border: 0; height: 0px; width:0px; "}) +
       javascript_tag( 
         %{
           SC.ready(function() {            	
-            	#{RAILS_ENV == 'development' ? "window.bespin_area = " : ""}
-            	BespinArea.create(#{bespin_options.to_json});
+            	#{RAILS_ENV == 'development' ? "window.bespinArea = " : ""}
+            	BespinArea.create(#{{:textAreaInputId => field_name, :bespinOptions => bespin_options}.to_json});
           });
         }
       )

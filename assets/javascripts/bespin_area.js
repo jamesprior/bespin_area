@@ -8,6 +8,7 @@
 
 BespinArea = SC.Object.extend({
   textAreaInput: null, // The DOM object of the text area input
+  bespinOptions: null, // The options passed to the bespin editor
   bespinEditor: null, // The Bespin object tied to the text editor
   // A delegate that Bespin calls internally when the text changes.  We use it to make sure the value of the
   // text area is always in sync
@@ -36,12 +37,13 @@ BespinArea = SC.Object.extend({
   	editingDiv.style.width = width;
   	
   	inputArea.style.display="none";
+  	window.editingDiv = editingDiv;
   	
-  	tiki.require("Embedded").useBespin(editingDiv);
-  	var bespinEditor = editingDiv.bespin;
+  	var bespinEditor = tiki.require("Embedded").useBespin(editingDiv, this.bespinOptions);
   	
   	// The key part, the text storage engine calls textStorageEdited when the contents change.
-    bespinEditor.getPath("editorPane.editorView.layoutManager.textStorage").addDelegate(this);
+  	// It'd be nice if we could use text areas directly but that's not working w/ this version of Bespin
+    bespinEditor.getPath("_editorView.layoutManager.textStorage").addDelegate(this);
     this.set('bespinEditor', bespinEditor);
     this.set('textAreaInput', inputArea);
   }
