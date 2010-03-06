@@ -1,24 +1,40 @@
 BespinArea
 ==========
 
-<<BESPIN DESCRIPTION>>
+Bespin is a Mozilla Labs experiment on how to build an extensible Web code editor using HTML 5 technology.  Read more about it at http://bespin.mozillalabs.com/
 
 BespinArea is a Ruby on Rails plugin consisting of ActionView helpers and Javascript to bind a Bespin editor to a text area.
 It is the goal of this project to make the replacement as seamless as possible by not requiring any additional JavaScript 
-libraries and not impacting the functioning of any text areas if bespin is not supported in the client browser.
+libraries and not impacting the functioning of any text areas if Bespin is not supported in the client browser.
 
-There are two options that can be set globally:
+There are two options that can be set globally in your environment:
 ActionView::bespin_areas = [true | false] 
 ActionView::bespin_default_options is a hash passed to the bespin editor.
 
 both text_area and text_area_tag both accept a :bespin option along with the html options.  Set it to true or false to control
-the default behavior, pass it a hash to enable the editor and include the options.
+the default behavior, pass it an options hash to enable the editor and include the options.
 
+Installation
+============
+
+BespinArea comes with BespinEmbedded Dropin JS and supporting CSS.  The assets should be installed during the plugin install process to public/javascripts/bespin_area and public/stylesheets/bespin_area, but you'll need to remember to include the assets on any page that uses bespin.
+
+If you're using an asset packager you can look at the included javascript and css files, or you can include them all at once with the helper:
+
+  <%= bespin_area_includes_tag %>
 
 Example
 =======
 
-Example goes here.
+To enable bespin for a specific field, with Javascript formatting:
+
+  <%= f.text_area :js_header, :rows => 20, :cols => 100, :bespin => {:settings => {:strictlines => true}, :syntax => 'js'} %>
+  
+If BespinArea is enabled site wide, disable it for a specific form:
+
+  <%= text_area_tag :plaintext_footer, :rows => 20, :cols => 100, :bespin => false %>
+  
 
 
-Copyright (c) 2010 [name of plugin creator], released under the MIT license
+
+Copyright (c) 2010 James Prior, released under the MIT license
