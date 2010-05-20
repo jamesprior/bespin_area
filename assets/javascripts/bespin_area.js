@@ -13,7 +13,7 @@ BespinArea = SC.Object.extend({
   // A delegate that Bespin calls internally when the text changes.  We use it to make sure the value of the
   // text area is always in sync
   textStorageEdited: function(sender, oldRange, newRange) {
-      this.textAreaInput.value = sender.value();
+    this.textAreaInput.value = sender.value();
   },
   init: function() {
     this.sc_super();
@@ -31,7 +31,7 @@ BespinArea = SC.Object.extend({
   	  height = (inputArea.rows * 17.5) + "px"; //Approximately the row height in pixels under testing w/ Firefox
   	}
   	
-  	editingDiv.innerHTML = inputArea.value;
+  	//editingDiv.innerHTML = inputArea.value;
   	editingDiv.style.visibility="visible";
   	editingDiv.style.height = height;
   	editingDiv.style.width = width;
@@ -39,10 +39,12 @@ BespinArea = SC.Object.extend({
   	inputArea.style.display="none";
   	window.editingDiv = editingDiv;
   	
-  	var bespinEditor = tiki.require("Embedded").useBespin(editingDiv, this.bespinOptions);
+  	var bespinEditor = tiki.require("embedded").useBespin(editingDiv, this.bespinOptions);
+  	bespinEditor.setValue(this.initialContent);
   	
   	// The key part, the text storage engine calls textStorageEdited when the contents change.
   	// It'd be nice if we could use text areas directly but that's not working w/ this version of Bespin
+    //bespinEditor.addEventListener('textChange', function(){this.textAreaInput.value = this.bespinEditor.getValue();});
     bespinEditor.getPath("_editorView.layoutManager.textStorage").addDelegate(this);
     this.set('bespinEditor', bespinEditor);
     this.set('textAreaInput', inputArea);
