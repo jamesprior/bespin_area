@@ -26,6 +26,14 @@ BespinArea = SC.Object.extend({
       this.bespinEditor.setValue(this.textAreaInput.value);
     }
   },
+  toggle: function() {
+    if (this.editingDiv.style.visibility == "visible") {
+      this.hide();
+    }
+    else {
+      this.show();
+    }
+  },
   init: function() {
     this.sc_super();
     this.set('textAreaInput', document.getElementById(this.textAreaInputId));
