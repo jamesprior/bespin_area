@@ -35,15 +35,11 @@ BespinArea = SC.Object.extend({
     var height = this.textAreaInput.style.height;
     
     if (tiki.require("bespin:util/util").isString(width) === false || width == "") {
-      width = (this.textAreaInput.cols * 8.14); //Approximately the col width in pixels under testing w/ Firefox
-      if (width < 0) width = 300;
-      width =  width + "px"; 
+      width =  this.textAreaInput.scrollWidth + "px"; 
     }
     
     if (tiki.require("bespin:util/util").isString(height) === false || height == "") {
-      height = (this.textAreaInput.rows * 17.5); //Approximately the row height in pixels under testing w/ Firefox
-      if (height < 0) height = 300;
-      height = height + "px"; 
+      height = this.textAreaInput.scrollHeight + "px"; 
     }
     
     this.editingDiv.style.height = height;
@@ -53,7 +49,7 @@ BespinArea = SC.Object.extend({
     //Load up bespin
     var bespinEditor = tiki.require("embedded").useBespin(this.editingDiv, this.bespinOptions);
     //Set the initial content
-    bespinEditor.setValue(this.initialContent);
+    if (this.initialContent !== null) bespinEditor.setValue(this.initialContent);
     
     //Update the textarea when the text of the editor changes
     var input = this.textAreaInput;
