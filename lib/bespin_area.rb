@@ -10,12 +10,11 @@ module ActionView
         bespin_options = options.delete(:bespin)
         bespin_options = ActionView::bespin_areas if bespin_options.nil?
         bespin_options = {} if bespin_options === true # In case they passed :bespin => true
-        
+
         field_name = "#{object_name}_#{method}"
         tag  = ''
         if bespin_options
-          helpful_accessor = InstanceTag.new(object_name, method, self)
-          tag += include_bespin_for(field_name, helpful_accessor.value(helpful_accessor.object), bespin_options)
+          tag += include_bespin_for(field_name, options[:object].send(method), bespin_options)
         end
         tag + text_area_without_bespin(object_name, method, options)
       end
