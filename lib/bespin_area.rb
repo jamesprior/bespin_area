@@ -9,9 +9,11 @@ module ActionView
       def text_area_with_bespin(object_name, method, options = {})
         bespin_options = options.delete(:bespin)
         bespin_options = ActionView::bespin_areas if bespin_options.nil?
+        bespin_options = {} if bespin_options === true # In case they passed :bespin => true
+        
         field_name = "#{object_name}_#{method}"
         tag  = ''
-        if bespin_options 
+        if bespin_options
           helpful_accessor = InstanceTag.new(object_name, method, self)
           tag += include_bespin_for(field_name, helpful_accessor.value(helpful_accessor.object), bespin_options)
         end
@@ -24,6 +26,7 @@ module ActionView
       def text_area_tag_with_bespin(name, content = nil, options = {})
         bespin_options = options.delete(:bespin)
         bespin_options = ActionView::bespin_areas if bespin_options.nil?
+        bespin_options = {} if bespin_options === true
         ( bespin_options ? include_bespin_for(name, content, bespin_options) : '' ) +
           text_area_tag_without_bespin(name, content, options)
       end
@@ -40,9 +43,11 @@ module ActionView
       content_tag(:div, nil, {:id => "#{field_name}_editor", :style => "visibility:hidden; margin: 0; padding: 0; border: 0; height: 0px; width:0px; "}) +
       javascript_tag( 
         %{
-          SC.ready(function() {            	
-            	#{RAILS_ENV == 'development' ? "window.bespinArea = " : ""}
-            	BespinArea.create(#{{:textAreaInputId => field_name, :bespinOptions => bespin_options, :initialContent => content}.to_json});
+          SC.ready(function() {
+              if(typeof(window.bespinArea) == "undefined") {
+                //Only one bespinArea per page. Thems the breaks.
+            	  window.bespinArea = BespinArea.create(#{{:textAreaInputId => field_name, :bespinOptions => bespin_options, :initialContent => content}.to_json});
+          	  }
           });
         }
       )

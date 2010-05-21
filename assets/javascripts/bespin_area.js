@@ -8,45 +8,60 @@
 
 BespinArea = SC.Object.extend({
   textAreaInput: null, // The DOM object of the text area input
-  bespinOptions: null, // The options passed to the bespin editor
   bespinEditor: null, // The Bespin object tied to the text editor
-  // A delegate that Bespin calls internally when the text changes.  We use it to make sure the value of the
-  // text area is always in sync
-  textStorageEdited: function(sender, oldRange, newRange) {
-    this.textAreaInput.value = sender.value();
+  editingDiv: null,  // The DOM object of our initial div, where we place bespin
+  hide: function() {
+    this.editingDiv.style.visibility="hidden";
+    this.editingDiv.style.display="none";
+    
+    this.textAreaInput.style.display="block";
+  },
+  show: function(){
+    this.editingDiv.style.display="block";
+    this.editingDiv.style.visibility="visible";   
+    
+    this.textAreaInput.style.display="none";
+    
+    if (this.bespinEditor != null) {
+      this.bespinEditor.setValue(this.textAreaInput.value);
+    }
   },
   init: function() {
     this.sc_super();
-    var editingDiv = document.getElementById(this.textAreaInputId + "_editor");
-    var inputArea = document.getElementById(this.textAreaInputId);
-                    	
-  	var width = inputArea.style.width;
-  	var height = inputArea.style.height;
-  	
-  	if (tiki.require("bespin:util/util").isString(width) === false || width == "") {
-  	  width = (inputArea.cols * 8.14) + "px"; //Approximately the col width in pixels under testing w/ Firefox
-  	}
-  	
-  	if (tiki.require("bespin:util/util").isString(height) === false || height == "") {
-  	  height = (inputArea.rows * 17.5) + "px"; //Approximately the row height in pixels under testing w/ Firefox
-  	}
-  	
-  	//editingDiv.innerHTML = inputArea.value;
-  	editingDiv.style.visibility="visible";
-  	editingDiv.style.height = height;
-  	editingDiv.style.width = width;
-  	
-  	inputArea.style.display="none";
-  	window.editingDiv = editingDiv;
-  	
-  	var bespinEditor = tiki.require("embedded").useBespin(editingDiv, this.bespinOptions);
-  	bespinEditor.setValue(this.initialContent);
-  	
-  	// The key part, the text storage engine calls textStorageEdited when the contents change.
-  	// It'd be nice if we could use text areas directly but that's not working w/ this version of Bespin
-    //bespinEditor.addEventListener('textChange', function(){this.textAreaInput.value = this.bespinEditor.getValue();});
-    bespinEditor.getPath("_editorView.layoutManager.textStorage").addDelegate(this);
+    this.set('textAreaInput', document.getElementById(this.textAreaInputId));
+    this.set('editingDiv', document.getElementById(this.textAreaInputId + "_editor"));
+                      
+    var width = this.textAreaInput.style.width;
+    var height = this.textAreaInput.style.height;
+    
+    if (tiki.require("bespin:util/util").isString(width) === false || width == "") {
+      width = (this.textAreaInput.cols * 8.14); //Approximately the col width in pixels under testing w/ Firefox
+      if (width < 0) width = 300;
+      width =  width + "px"; 
+    }
+    
+    if (tiki.require("bespin:util/util").isString(height) === false || height == "") {
+      height = (this.textAreaInput.rows * 17.5); //Approximately the row height in pixels under testing w/ Firefox
+      if (height < 0) height = 300;
+      height = height + "px"; 
+    }
+    
+    this.editingDiv.style.height = height;
+    this.editingDiv.style.width = width;
+    this.show();
+    
+    //Load up bespin
+    var bespinEditor = tiki.require("embedded").useBespin(this.editingDiv, this.bespinOptions);
+    //Set the initial content
+    bespinEditor.setValue(this.initialContent);
+    
+    //Update the textarea when the text of the editor changes
+    var input = this.textAreaInput;
+    bespinEditor.addEventListener('textChange', function() {
+      input.value = bespinEditor.getValue();
+    });
+    
+    //Store them for later reference
     this.set('bespinEditor', bespinEditor);
-    this.set('textAreaInput', inputArea);
   }
 });

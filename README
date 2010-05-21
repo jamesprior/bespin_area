@@ -28,7 +28,7 @@ Example
 
 To enable bespin for a specific field, with Javascript formatting:
 
-  <%= f.text_area :js_header, :rows => 20, :cols => 100, :bespin => {:settings => {:strictlines => true}, :syntax => 'js'} %>
+  <%= f.text_area :js_header, :rows => 20, :cols => 100, :bespin => {:settings => {:tabstop => 2}, :syntax => 'js'} %>
   
 If BespinArea is enabled site wide, disable it for a specific form:
 
