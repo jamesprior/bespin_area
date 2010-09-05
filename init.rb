@@ -1,2 +1,2 @@
 # Include hook code here
-require 'bespin_area'
+require File.join(File.dirname(__FILE__), 'lib', 'bespin_area')
