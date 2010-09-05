@@ -14,6 +14,12 @@ ActionView::bespin_default_options is a hash passed to the bespin editor.
 both text_area and text_area_tag both accept a :bespin option along with the html options.  Set it to true or false to control
 the default behavior, pass it an options hash to enable the editor and include the options.
 
+Upgrading
+============
+If you're upgrading the plugin, re-run the installation process:
+
+rake bespin_area:install
+
 Installation
 ============
 
